@@ -1,7 +1,11 @@
 import os
 import json
+import time
 import requests
+import pandas as pd
 import streamlit as st
+
+from datetime import datetime
 from openai import AzureOpenAI
 
 # create a config dictionary
@@ -79,10 +83,46 @@ def read_json(file_path):
 # return matching seed data
 def get_seed(subject, seed):
     # Specify the path to your JSON file
-    file_path = f"data/seed_{subject}.json"
-    collection = read_json(file_path)
+    collection = read_json(f"data/seed_{subject}.json")
 
     if seed in collection:
         return collection[seed]
     else:
         return collection
+
+
+# save data to database
+def save_data(subject):
+    data = read_json(f"data/db_{subject}.json")
+    now = datetime.now()
+
+    data.append(
+        {
+            "id": int(time.time() * 1000),
+            "updatedAt": now.isoformat(),
+            "topic": st.session_state.topic,
+            "context": st.session_state.context,
+            "question": st.session_state.question,
+            "answer": st.session_state.answer,
+        }
+    )
+
+    with open(f"data/db_{subject}.json", "w") as file:
+        json.dump(data, file, indent=2)
+
+
+# get data from database
+def get_data(subject, topic):
+    dbdata = read_json(f"data/db_{subject}.json")
+    # Create DataFrame
+    df = pd.DataFrame(dbdata)
+    topics = df["topic"].tolist()
+
+    if topic:
+        # Filter DataFrame to get the object with matching topic
+        matching_topic = df[df["topic"] == topic]
+        # Convert the filtered DataFrame to a dictionary
+        result = matching_topic.to_dict(orient="records")
+        return result[0]
+
+    return topics

@@ -1,4 +1,5 @@
 import streamlit as st
+import app.utils as utils
 
 
 def show_home():
@@ -9,14 +10,28 @@ def show_home():
         # initial_sidebar_state="collapsed",
     )
     st.logo(
-        "https://azure.microsoft.com/svghandler/ai-studio/?width=600&height=315",
+        "https://logolook.net/wp-content/uploads/2021/06/DepEd-Logo.svg",
         link="https://ai.azure.com/",
     )
-    st.title("📝PISA GenAI - Admin Tooling / Student Portal")
+    # Initial states
+    if "context" not in st.session_state:
+        st.session_state.context = ""
+    if "question" not in st.session_state:
+        st.session_state.question = ""
+    if "answer" not in st.session_state:
+        st.session_state.answer = ""
+    if "topic" not in st.session_state:
+        st.session_state.topic = ""
 
     st.markdown(
         """
         <style>
+        .block-container {
+            padding-top: 1rem;
+            # padding-bottom: 1rem;
+            # padding-left: 1rem;
+            # padding-right: 1rem;
+        }
         .stAppDeployButton {
             display: none;
         }
@@ -38,12 +53,38 @@ def show_home():
 # display the sidebar
 def show_sidebar():
     with st.sidebar:
+        with st.container(border=True):
+            st.page_link("app.py", label="Home", icon="🏠")
+            st.page_link("pages/user.py", label="Student Portal", icon="🙋")
+            st.page_link("pages/admin.py", label="Admin Tooling", icon="🛡️")
+
         st.image(
-            "https://github.com/robrita/PISA-GenAI/blob/main/img/pisa-card.jpeg?raw=true",
+            "https://github.com/robrita/PISA-GenAI/blob/main/img/poster.jpeg?raw=true",
         )
         st.write(
             "**PISA GenAI** - A tool for generating and evaluating PISA mock exam using LLM."
         )
 
+        st.image(
+            "https://depedtambayan.gumlet.io/wp-content/uploads/2019/09/Slide1.png",
+        )
+
         st.subheader("🛠Technology Stack", anchor=False)
         st.write("Python, Streamlit, Azure OpenAI")
+
+
+# select subject from dropdown
+def select_subject():
+    subjects = {
+        "Science": "science",
+        "Mathematics": "math",
+        "Reading": "reading",
+        "Financial literacy": "financial_literacy",
+        "Creative Thinking": "creative_thinking",
+        "Global competence": "global_competence",
+        "Collaborative problem solving": "problem_solving",
+    }
+
+    subject_selected = st.selectbox("Select a Subject:", options=list(subjects.keys()))
+    subject = subjects[subject_selected]
+    return subject_selected, subject
