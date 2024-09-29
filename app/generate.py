@@ -3,10 +3,10 @@ import streamlit as st
 import app.utils as utils
 
 
-def pisa_question(subject, seed):
+def pisa_question(subject_selected, subject, seed):
     with st.spinner("Processing ..."):
         # results = json.loads(pisa_seed(subject, seed))
-        results = json.loads(pisa_generate(subject, seed))
+        results = json.loads(pisa_generate(subject_selected, subject, seed))
         # st.write(results)
         st.session_state.context = results["Context"]
         st.session_state.question = results["Question"]
@@ -14,12 +14,12 @@ def pisa_question(subject, seed):
         st.session_state.topic = results["Topic"]
 
 
-def pisa_generate(subject, seed):
+def pisa_generate(subject_selected, subject, seed):
     topics = utils.get_data(subject, 0)
 
     system = [
         "You are an expert PISA exam generator.",
-        f"Your goal is to generate a PISA exam question along with it's context and answer for {subject} subject.",
+        f"Your goal is to generate a PISA exam question along with it's context and answer for {subject_selected} subject.",
         "Response should be in valid JSON format only.\n",
         "# Response JSON Schema",
         "{",
@@ -35,15 +35,18 @@ def pisa_generate(subject, seed):
         {"role": "system", "content": "\n".join(system)},
         {
             "role": "user",
-            "content": f"Give me a sample PISA exam question along with context related to {subject}.",
+            "content": f"Give me a sample PISA exam question along with context related to {subject_selected}.",
         },
-        {"role": "assistant", "content": json.dumps(utils.get_seed(subject, seed))},
+        {
+            "role": "assistant",
+            "content": json.dumps(utils.get_seed(subject, seed)),
+        },
     ]
 
     user = [
         {
             "role": "user",
-            "content": f"More practice PISA exam question related to {subject}.",
+            "content": f"More practice PISA exam question related to {subject_selected}.",
         },
     ]
 

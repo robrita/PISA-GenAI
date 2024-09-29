@@ -25,7 +25,7 @@ seed = st.selectbox(
 # st.subheader("New Question:")
 # PISA generator
 if st.button(":blue[Generate New Data]", key="generate"):
-    generate.pisa_question(subject_selected, seed)
+    generate.pisa_question(subject_selected, subject, seed)
 
 if st.session_state.context or st.session_state.question:
     with st.container(border=True):

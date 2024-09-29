@@ -1,6 +1,5 @@
 import streamlit as st
 import app.pages as pages
-import app.generate as generate
 import app.evaluate as evaluate
 import app.utils as utils
 
