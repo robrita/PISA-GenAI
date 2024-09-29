@@ -1,47 +1,67 @@
 import streamlit as st
-import os
-import app.pages
-import app.sidebar
-import app.describe
-import app.upload
+import app.pages as pages
+import app.generate as generate
+import app.evaluate as evaluate
+import app.utils as utils
 
-from openai import AzureOpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
 
-if __name__ == "__main__":
-    # App title
-    question = app.pages.show_home()
+# App title
+pages.show_home()
+pages.show_sidebar()
 
-    # create a config dictionary
-    config = {
-        "endpoint": os.environ["AZURE_OPENAI_ENDPOINT"],
-        "api_key": os.environ["AZURE_OPENAI_KEY"],
-        "api_version": os.environ["AZURE_OPENAI_API_VERSION"],
-        "model": os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"],
-    }
+subjects = {
+    "Science": "science",
+    "Mathematics": "math",
+    "Reading": "reading",
+    "Financial literacy": "financial_literacy",
+    "Creative Thinking": "creative_thinking",
+    "Global competence": "global_competence",
+    "Collaborative problem solving": "problem_solving",
+}
 
-    # Initialize OpenAI client with API key
-    api_key = config["api_key"]
+subject_selected = st.selectbox("Select a Subject:", options=list(subjects.keys()))
+subject = subjects[subject_selected]
 
-    client = AzureOpenAI(
-        azure_endpoint=config["endpoint"],
-        api_version=config["api_version"],
-        api_key=api_key,
+# st.subheader("Seed Question:")
+seed = st.selectbox(
+    "Select a Seed Question:", options=list(utils.get_seed(subject, 0).keys())
+)
+
+if "context_question" not in st.session_state:
+    st.session_state.context_question = ""
+if "context" not in st.session_state:
+    st.session_state.context = ""
+if "question" not in st.session_state:
+    st.session_state.question = ""
+if "answer" not in st.session_state:
+    st.session_state.answer = ""
+
+# st.subheader("New Question:")
+# PISA generator
+button_generate = st.button("Generate New Question", key="generate")
+if button_generate:
+    st.session_state.context_question = generate.pisa_question(subject_selected, seed)
+
+if st.session_state.context or st.session_state.question:
+    with st.container(border=True):
+        st.write(st.session_state.context)
+        st.write(st.session_state.question)
+
+# st.subheader("Answer:")
+if "context_question" in st.session_state:
+    st.session_state.answer = st.text_area(
+        "Enter your answer here:",
     )
 
-    # app sidebar
-    with st.sidebar:
-        config["model"] = app.sidebar.show_sidebar(config)
-
-    st.subheader("Answer:")
-    tab1, tab2 = st.tabs(["✍️Write", "📷Upload"])
-
-    # type the math formula on canvas
-    with tab1:
-        app.describe.show_describe(config, api_key, client, question)
-
-    # Upload a picture of a math formula
-    with tab2:
-        app.upload.show_upload(config, api_key, client, question)
+# PISA evaluator
+button_evaluate = st.button(
+    "Evaluate",
+    key="evaluate",
+    disabled=st.session_state.answer == "" or st.session_state.context == "",
+)
+if button_evaluate:
+    with st.container(border=True):
+        evaluate.pisa_answer()
