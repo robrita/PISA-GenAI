@@ -34,5 +34,5 @@ def pisa_evaluate():
         {"role": "system", "content": "\n".join(system)},
     ]
 
-    # st.write(messages)
+    st.write(messages)
     return utils.chat(messages, 0, 800, True, "json_object")

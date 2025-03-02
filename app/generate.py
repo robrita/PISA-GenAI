@@ -51,7 +51,7 @@ def pisa_generate(subject_selected, subject, seed):
     ]
 
     messages = prompt + user
-    # st.write(messages)
+    st.write(messages)
     return utils.chat(messages, 0.7, 800, True, "json_object")
 
 

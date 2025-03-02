@@ -38,5 +38,13 @@
     "context": "The water cycle is a continuous process by which water circulates through the Earth's atmosphere, land, and oceans. It includes processes such as evaporation, condensation, precipitation, and infiltration.",
     "question": "What role does condensation play in the water cycle?\nA. It causes water to move from the atmosphere to the Earth's surface.\nB. It allows water to return to the ocean through runoff.\nC. It changes water vapor into liquid water, forming clouds.\nD. It causes water to seep into the ground and replenish aquifers.",
     "answer": "C"
+  },
+  {
+    "id": 1727676320792,
+    "updatedAt": "2024-09-30T14:05:20.792331",
+    "topic": "Electric cars and environmental impact",
+    "context": "Electric cars are becoming increasingly popular as a more environmentally friendly alternative to traditional gasoline-powered vehicles. These cars use electric motors powered by rechargeable batteries. The efficiency and environmental impact of electric cars depend on various factors, including how the electricity used to charge the batteries is generated.",
+    "question": "How does the source of electricity used to charge electric cars affect their environmental impact?",
+    "answer": "If the electricity comes from renewable sources like wind or solar, the environmental impact is lower compared to electricity generated from fossil fuels."
   }
 ]
